@@ -5,7 +5,7 @@
  * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
 
-namespace Spryker\Zed\UrlStorage\Communication\Plugin\Event\Exception;
+namespace Spryker\Zed\UrlStorage\Business\Exception;
 
 use Exception;
 
