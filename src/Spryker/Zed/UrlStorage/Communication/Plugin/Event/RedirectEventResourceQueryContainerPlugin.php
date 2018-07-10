@@ -19,7 +19,7 @@ use Spryker\Zed\Url\Dependency\UrlEvents;
  * @method \Spryker\Zed\UrlStorage\Business\UrlStorageFacadeInterface getFacade()
  * @method \Spryker\Zed\UrlStorage\Communication\UrlStorageCommunicationFactory getFactory()
  */
-class RedirectEventResourcePlugin extends AbstractPlugin implements EventResourceQueryContainerPluginInterface
+class RedirectEventResourceQueryContainerPlugin extends AbstractPlugin implements EventResourceQueryContainerPluginInterface
 {
     /**
      * Specification:
