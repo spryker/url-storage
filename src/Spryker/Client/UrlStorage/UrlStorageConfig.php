@@ -7,7 +7,9 @@
 
 namespace Spryker\Client\UrlStorage;
 
-class UrlStorageConfig
+use Spryker\Client\Kernel\AbstractBundleConfig;
+
+class UrlStorageConfig extends AbstractBundleConfig
 {
     /**
      * To be able to work with data exported with collectors to redis, we need to bring this module into compatibility
@@ -17,6 +19,6 @@ class UrlStorageConfig
      */
     public static function isCollectorCompatibilityMode()
     {
-        return true;
+        return false;
     }
 }
