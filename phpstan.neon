@@ -4,3 +4,5 @@ parameters:
         - '#Parameter \#1 \$reference of method .+SynchronizationDataTransfer::setReference\(\) expects string\|null, int given#'
         -
             identifier: missingType.iterableValue
+        -
+            identifier: notIdentical.alwaysTrue
