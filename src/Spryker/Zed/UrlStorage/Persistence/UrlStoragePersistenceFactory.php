@@ -37,9 +37,6 @@ class UrlStoragePersistenceFactory extends AbstractPersistenceFactory
         return SpyUrlRedirectStorageQuery::create();
     }
 
-    /**
-     * @return \Orm\Zed\Url\Persistence\SpyUrlQuery
-     */
     public function getUrlQuery(): SpyUrlQuery
     {
         return $this->getProvidedDependency(UrlStorageDependencyProvider::PROPEL_QUERY_URL);

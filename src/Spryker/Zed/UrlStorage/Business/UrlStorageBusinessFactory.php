@@ -55,9 +55,6 @@ class UrlStorageBusinessFactory extends AbstractBusinessFactory
         return $this->getProvidedDependency(UrlStorageDependencyProvider::SERVICE_UTIL_SANITIZE);
     }
 
-    /**
-     * @return \Spryker\Zed\UrlStorage\Dependency\Facade\UrlStorageToStoreFacadeInterface
-     */
     public function getStoreFacade(): UrlStorageToStoreFacadeInterface
     {
         return $this->getProvidedDependency(UrlStorageDependencyProvider::FACADE_STORE);

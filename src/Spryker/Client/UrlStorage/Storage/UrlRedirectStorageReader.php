@@ -29,11 +29,6 @@ class UrlRedirectStorageReader implements UrlRedirectStorageReaderInterface
      */
     protected $urlRedirectStorageMapper;
 
-    /**
-     * @param \Spryker\Client\UrlStorage\Dependency\Client\UrlStorageToStorageInterface $storageClient
-     * @param \Spryker\Client\UrlStorage\KeyBuilder\UrlRedirectStorageKeyBuilderInterface $redirectStorageKeyBuilder
-     * @param \Spryker\Client\UrlStorage\Mapper\UrlRedirectStorageMapperInterface $urlRedirectStorageMapper
-     */
     public function __construct(
         UrlStorageToStorageInterface $storageClient,
         UrlRedirectStorageKeyBuilderInterface $redirectStorageKeyBuilder,
@@ -44,11 +39,6 @@ class UrlRedirectStorageReader implements UrlRedirectStorageReaderInterface
         $this->urlRedirectStorageMapper = $urlRedirectStorageMapper;
     }
 
-    /**
-     * @param int $idRedirectUrl
-     *
-     * @return \Generated\Shared\Transfer\UrlRedirectStorageTransfer|null
-     */
     public function findUrlRedirectStorageById(int $idRedirectUrl): ?UrlRedirectStorageTransfer
     {
         $data = $this->storageClient->get($this->redirectStorageKeyBuilder->generateKey($idRedirectUrl));

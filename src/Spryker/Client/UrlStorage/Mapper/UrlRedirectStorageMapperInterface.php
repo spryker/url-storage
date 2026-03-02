@@ -11,12 +11,6 @@ use Generated\Shared\Transfer\UrlRedirectStorageTransfer;
 
 interface UrlRedirectStorageMapperInterface
 {
-    /**
-     * @param array $storageData
-     * @param \Generated\Shared\Transfer\UrlRedirectStorageTransfer $urlRedirectStorageTransfer
-     *
-     * @return \Generated\Shared\Transfer\UrlRedirectStorageTransfer
-     */
     public function mapStorageDataToUrlRedirectStorageTransfer(
         array $storageData,
         UrlRedirectStorageTransfer $urlRedirectStorageTransfer

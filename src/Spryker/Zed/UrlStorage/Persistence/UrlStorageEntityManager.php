@@ -14,11 +14,6 @@ use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
  */
 class UrlStorageEntityManager extends AbstractEntityManager implements UrlStorageEntityManagerInterface
 {
-    /**
-     * @param array $urlIds
-     *
-     * @return void
-     */
     public function deleteStorageUrlsByIds(array $urlIds): void
     {
         if (count($urlIds) === 0) {

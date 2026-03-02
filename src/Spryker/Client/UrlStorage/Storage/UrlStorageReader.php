@@ -131,11 +131,6 @@ class UrlStorageReader implements UrlStorageReaderInterface
         return $this->mapUrlStorageDataToUrlStorageTransfers($urlStorageData);
     }
 
-    /**
-     * @param array $urlDetails
-     *
-     * @return string|null
-     */
     protected function getLocaleNameFromUrlDetails(array $urlDetails): ?string
     {
         if (!isset($urlDetails['locale_urls'])) {
@@ -203,9 +198,6 @@ class UrlStorageReader implements UrlStorageReaderInterface
         return $this->getStorageKeyBuilder()->generateKey($synchronizationDataTransfer);
     }
 
-    /**
-     * @return \Spryker\Service\Synchronization\Dependency\Plugin\SynchronizationKeyGeneratorPluginInterface
-     */
     protected function getStorageKeyBuilder(): SynchronizationKeyGeneratorPluginInterface
     {
         if (static::$storageKeyBuilder === null) {

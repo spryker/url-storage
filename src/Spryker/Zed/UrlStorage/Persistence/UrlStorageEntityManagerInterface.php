@@ -9,10 +9,5 @@ namespace Spryker\Zed\UrlStorage\Persistence;
 
 interface UrlStorageEntityManagerInterface
 {
-    /**
-     * @param array $urlIds
-     *
-     * @return void
-     */
     public function deleteStorageUrlsByIds(array $urlIds): void;
 }

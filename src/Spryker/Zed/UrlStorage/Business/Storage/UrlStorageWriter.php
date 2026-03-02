@@ -58,13 +58,6 @@ class UrlStorageWriter implements UrlStorageWriterInterface
      */
     protected $isSendingToQueue = true;
 
-    /**
-     * @param \Spryker\Zed\UrlStorage\Dependency\Service\UrlStorageToUtilSanitizeServiceInterface $utilSanitize
-     * @param \Spryker\Zed\UrlStorage\Persistence\UrlStorageRepositoryInterface $urlStorageRepository
-     * @param \Spryker\Zed\UrlStorage\Persistence\UrlStorageEntityManagerInterface $urlStorageEntityManager
-     * @param \Spryker\Zed\UrlStorage\Dependency\Facade\UrlStorageToStoreFacadeInterface $storeFacade
-     * @param bool $isSendingToQueue
-     */
     public function __construct(
         UrlStorageToUtilSanitizeServiceInterface $utilSanitize,
         UrlStorageRepositoryInterface $urlStorageRepository,

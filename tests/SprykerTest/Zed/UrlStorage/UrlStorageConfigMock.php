@@ -11,9 +11,6 @@ use Spryker\Zed\UrlStorage\UrlStorageConfig;
 
 class UrlStorageConfigMock extends UrlStorageConfig
 {
-    /**
-     * @return bool
-     */
     public function isSendingToQueue(): bool
     {
         return false;

@@ -37,17 +37,11 @@ class UrlStorageFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @return \Spryker\Client\UrlStorage\Mapper\UrlRedirectStorageMapperInterface
-     */
     public function createUrlRedirectStorageMapper(): UrlRedirectStorageMapperInterface
     {
         return new UrlRedirectStorageMapper();
     }
 
-    /**
-     * @return \Spryker\Client\UrlStorage\Storage\UrlRedirectStorageReaderInterface
-     */
     public function createUrlRedirectStorageReader(): UrlRedirectStorageReaderInterface
     {
         return new UrlRedirectStorageReader(
@@ -57,9 +51,6 @@ class UrlStorageFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @return \Spryker\Client\UrlStorage\KeyBuilder\UrlRedirectStorageKeyBuilderInterface
-     */
     public function createUrlRedirectStorageKeyBuilder(): UrlRedirectStorageKeyBuilderInterface
     {
         return new UrlRedirectStorageKeyBuilder(
@@ -94,25 +85,16 @@ class UrlStorageFactory extends AbstractFactory
         return $this->getProvidedDependency(UrlStorageDependencyProvider::PLUGINS_URL_STORAGE_RESOURCE_MAPPER);
     }
 
-    /**
-     * @return \Spryker\Client\UrlStorage\Dependency\Client\UrlStorageToStoreClientInterface
-     */
     public function getStoreClient(): UrlStorageToStoreClientInterface
     {
         return $this->getProvidedDependency(UrlStorageDependencyProvider::CLIENT_STORE);
     }
 
-    /**
-     * @return \Spryker\Client\UrlStorage\Dependency\Client\UrlStorageToLocaleClientInterface
-     */
     public function getLocaleClient(): UrlStorageToLocaleClientInterface
     {
         return $this->getProvidedDependency(UrlStorageDependencyProvider::CLIENT_LOCALE);
     }
 
-    /**
-     * @return \Spryker\Client\UrlStorage\Dependency\Service\UrlStorageToUtilEncodingServiceInterface
-     */
     public function getUtilEncodingService(): UrlStorageToUtilEncodingServiceInterface
     {
         return $this->getProvidedDependency(UrlStorageDependencyProvider::SERVICE_UTIL_ENCODING);

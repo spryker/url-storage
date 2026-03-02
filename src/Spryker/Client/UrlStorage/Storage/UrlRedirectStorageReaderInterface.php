@@ -11,10 +11,5 @@ use Generated\Shared\Transfer\UrlRedirectStorageTransfer;
 
 interface UrlRedirectStorageReaderInterface
 {
-    /**
-     * @param int $idRedirectUrl
-     *
-     * @return \Generated\Shared\Transfer\UrlRedirectStorageTransfer|null
-     */
     public function findUrlRedirectStorageById(int $idRedirectUrl): ?UrlRedirectStorageTransfer;
 }

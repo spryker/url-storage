@@ -36,12 +36,6 @@ class UrlRedirectStorageKeyBuilder implements UrlRedirectStorageKeyBuilderInterf
      */
     protected $urlStorageConfig;
 
-    /**
-     * @param \Spryker\Client\UrlStorage\Dependency\Service\UrlStorageToSynchronizationServiceInterface $synchronizationService
-     * @param \Spryker\Client\UrlStorage\Dependency\Client\UrlStorageToStoreClientInterface $storeClient
-     * @param \Spryker\Client\UrlStorage\Dependency\Client\UrlStorageToLocaleClientInterface $localeClient
-     * @param \Spryker\Client\UrlStorage\UrlStorageConfig $urlStorageConfig
-     */
     public function __construct(
         UrlStorageToSynchronizationServiceInterface $synchronizationService,
         UrlStorageToStoreClientInterface $storeClient,
@@ -54,11 +48,6 @@ class UrlRedirectStorageKeyBuilder implements UrlRedirectStorageKeyBuilderInterf
         $this->urlStorageConfig = $urlStorageConfig;
     }
 
-    /**
-     * @param int $idRedirectUrl
-     *
-     * @return string
-     */
     public function generateKey(int $idRedirectUrl): string
     {
         if ($this->urlStorageConfig::isCollectorCompatibilityMode()) {

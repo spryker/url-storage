@@ -9,10 +9,5 @@ namespace Spryker\Client\UrlStorage\KeyBuilder;
 
 interface UrlRedirectStorageKeyBuilderInterface
 {
-    /**
-     * @param int $idRedirectUrl
-     *
-     * @return string
-     */
     public function generateKey(int $idRedirectUrl): string;
 }
