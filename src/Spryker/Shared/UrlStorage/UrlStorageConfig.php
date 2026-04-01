@@ -24,4 +24,18 @@ class UrlStorageConfig extends AbstractSharedConfig
      * @var string
      */
     public const PUBLISH_URL_RETRY = 'publish.url.retry';
+
+    /**
+     * Defines queue name that as used for asynchronous event handling.
+     *
+     * @var string
+     */
+    public const string PUBLISH_URL_REDIRECT = 'publish.url.redirect';
+
+    /**
+     * Defines retry queue name that as used for asynchronous event handling.
+     *
+     * @var string
+     */
+    public const string PUBLISH_URL_REDIRECT_RETRY = 'publish.url.redirect.retry';
 }
