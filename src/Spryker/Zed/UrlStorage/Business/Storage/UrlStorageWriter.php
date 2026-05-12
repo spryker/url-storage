@@ -11,6 +11,7 @@ use Generated\Shared\Transfer\UrlStorageTransfer;
 use Orm\Zed\Url\Persistence\SpyUrl;
 use Orm\Zed\UrlStorage\Persistence\SpyUrlStorage;
 use Spryker\Shared\Log\LoggerTrait;
+use Spryker\Zed\Propel\Persistence\BatchProcessor\ActiveRecordBatchProcessorTrait;
 use Spryker\Zed\Url\Persistence\Propel\AbstractSpyUrl;
 use Spryker\Zed\UrlStorage\Dependency\Facade\UrlStorageToStoreFacadeInterface;
 use Spryker\Zed\UrlStorage\Dependency\Service\UrlStorageToUtilSanitizeServiceInterface;
@@ -20,6 +21,7 @@ use Spryker\Zed\UrlStorage\Persistence\UrlStorageRepositoryInterface;
 class UrlStorageWriter implements UrlStorageWriterInterface
 {
     use LoggerTrait;
+    use ActiveRecordBatchProcessorTrait;
 
     /**
      * @var string
@@ -132,6 +134,7 @@ class UrlStorageWriter implements UrlStorageWriterInterface
 
             $this->storeDataSet($urlStorageTransfer, $urlStorageEntity);
         }
+        $this->commit();
     }
 
     /**
@@ -157,7 +160,7 @@ class UrlStorageWriter implements UrlStorageWriterInterface
         $urlStorageEntity->setFkUrl($urlStorageTransfer->getIdUrl());
         $urlStorageEntity->setData($this->utilSanitize->arrayFilterRecursive($urlStorageTransfer->modifiedToArray()));
         $urlStorageEntity->setIsSendingToQueue($this->isSendingToQueue);
-        $urlStorageEntity->save();
+        $this->persist($urlStorageEntity);
     }
 
     /**
