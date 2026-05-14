@@ -9,6 +9,9 @@ namespace Spryker\Client\UrlStorage;
 
 use Spryker\Client\Kernel\AbstractBundleConfig;
 
+/**
+ * @method \Spryker\Shared\UrlStorage\UrlStorageConfig getSharedConfig()
+ */
 class UrlStorageConfig extends AbstractBundleConfig
 {
     /**
@@ -22,5 +25,16 @@ class UrlStorageConfig extends AbstractBundleConfig
     public static function isCollectorCompatibilityMode(): bool
     {
         return false;
+    }
+
+    /**
+     * Specification:
+     * - When enabled, locale_urls are fetched from a separate url_locale_map storage entry per resource.
+     *
+     * @api
+     */
+    public function isUrlLocaleMapStorageEnabled(): bool
+    {
+        return $this->getSharedConfig()->isUrlLocaleMapStorageEnabled();
     }
 }

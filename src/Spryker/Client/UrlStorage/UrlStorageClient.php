@@ -70,6 +70,16 @@ class UrlStorageClient extends AbstractClient implements UrlStorageClientInterfa
      * {@inheritDoc}
      *
      * @api
+     */
+    public function hasUrl(string $url, ?string $localeName): bool
+    {
+        return $this->getFactory()->createUrlStorageReader()->hasUrl($url, $localeName);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
      *
      * @param array<string> $urlCollection
      *

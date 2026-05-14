@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<database xmlns="spryker:schema-01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:schemaLocation="spryker:schema-01 https://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\UrlStorage\Persistence" package="src.Orm.Zed.UrlStorage.Persistence">
+    <table name="spy_url_locale_map_storage" identifierQuoting="true">
+        <column name="id_url_locale_map_storage" type="BIGINT" autoIncrement="true" primaryKey="true"/>
+        <column name="resource_reference" type="VARCHAR" size="256" required="true"/>
+        <index name="spy_url_locale_map_storage-resource_reference" unique="true">
+            <index-column name="resource_reference"/>
+        </index>
+        <id-method-parameter value="spy_url_locale_map_storage_pk_seq"/>
+        <behavior name="synchronization">
+            <parameter name="resource" value="url_locale_map"/>
+            <parameter name="key_suffix_column" value="resource_reference"/>
+            <parameter name="queue_group" value="sync.storage.url"/>
+        </behavior>
+        <behavior name="timestampable"/>
+    </table>
+</database>

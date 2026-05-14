@@ -18,10 +18,13 @@ use Spryker\Service\Synchronization\Dependency\Plugin\SynchronizationKeyGenerato
 
 class UrlStorageReader implements UrlStorageReaderInterface
 {
-    /**
-     * @var string
-     */
-    public const URL = 'url';
+    protected const string URL = 'url';
+
+    protected const string RESOURCE_FK_PREFIX = 'fk_';
+
+    protected const string URL_LOCALE_MAP_RESOURCE = 'url_locale_map';
+
+    protected const string LOCALE_URLS_KEY = 'locale_urls';
 
     /**
      * @var \Spryker\Client\UrlStorage\Dependency\Client\UrlStorageToStorageInterface
@@ -48,6 +51,10 @@ class UrlStorageReader implements UrlStorageReaderInterface
      */
     protected static $storageKeyBuilder;
 
+    protected static ?SynchronizationKeyGeneratorPluginInterface $localeMapKeyBuilder = null;
+
+    protected UrlStorageConfig $config;
+
     /**
      * @param \Spryker\Client\UrlStorage\Dependency\Client\UrlStorageToStorageInterface $storageClient
      * @param \Spryker\Client\UrlStorage\Dependency\Service\UrlStorageToSynchronizationServiceInterface $synchronizationService
@@ -58,12 +65,14 @@ class UrlStorageReader implements UrlStorageReaderInterface
         UrlStorageToStorageInterface $storageClient,
         UrlStorageToSynchronizationServiceInterface $synchronizationService,
         UrlStorageToUtilEncodingServiceInterface $utilEncodingService,
-        array $resourceMapperPlugins
+        array $resourceMapperPlugins,
+        UrlStorageConfig $config
     ) {
         $this->storageClient = $storageClient;
         $this->synchronizationService = $synchronizationService;
         $this->utilEncodingService = $utilEncodingService;
         $this->urlStorageResourceMapperPlugins = $resourceMapperPlugins;
+        $this->config = $config;
     }
 
     /**
@@ -104,6 +113,25 @@ class UrlStorageReader implements UrlStorageReaderInterface
         return [];
     }
 
+    public function hasUrl(string $url, ?string $localeName): bool
+    {
+        $urlDetails = $this->getUrlsFromStorage([$url])[0] ?? null;
+
+        if (!$urlDetails) {
+            return false;
+        }
+
+        if ($localeName === null) {
+            $localeName = $this->getLocaleNameFromUrlDetails($urlDetails);
+        }
+
+        $options = [
+            'locale' => strtolower((string)$localeName),
+        ];
+
+        return $this->getUrlStorageResourceMapTransfer($urlDetails, $options) !== null;
+    }
+
     /**
      * @param string $url
      *
@@ -128,22 +156,135 @@ class UrlStorageReader implements UrlStorageReaderInterface
             return [];
         }
 
+        if ($this->config->isUrlLocaleMapStorageEnabled()) {
+            $urlStorageData = $this->injectLocaleUrlsInBatch($urlStorageData);
+        }
+
         return $this->mapUrlStorageDataToUrlStorageTransfers($urlStorageData);
     }
 
     protected function getLocaleNameFromUrlDetails(array $urlDetails): ?string
     {
-        if (!isset($urlDetails['locale_urls'])) {
+        if ($this->config->isUrlLocaleMapStorageEnabled()) {
+            $urlDetails = $this->injectLocaleUrls($urlDetails);
+        }
+
+        if (!isset($urlDetails[static::LOCALE_URLS_KEY])) {
             return null;
         }
 
-        foreach ($urlDetails['locale_urls'] as $localeUrl) {
+        foreach ($urlDetails[static::LOCALE_URLS_KEY] as $localeUrl) {
             if ($localeUrl['fk_locale'] === $urlDetails['fk_locale']) {
                 return $localeUrl['locale_name'];
             }
         }
 
         return null;
+    }
+
+    /**
+     * @param array<string, mixed> $urlDetails
+     */
+    protected function buildResourceReference(array $urlDetails): ?string
+    {
+        foreach ($urlDetails as $key => $value) {
+            if ($value === null || !str_starts_with($key, static::RESOURCE_FK_PREFIX . 'resource_')) {
+                continue;
+            }
+
+            return sprintf('%s:%s', substr($key, strlen(static::RESOURCE_FK_PREFIX)), $value);
+        }
+
+        return null;
+    }
+
+    protected function getLocaleMapStorageKeyBuilder(): SynchronizationKeyGeneratorPluginInterface
+    {
+        if (static::$localeMapKeyBuilder === null) {
+            static::$localeMapKeyBuilder = $this->synchronizationService->getStorageKeyBuilder(static::URL_LOCALE_MAP_RESOURCE);
+        }
+
+        return static::$localeMapKeyBuilder;
+    }
+
+    protected function getLocaleMapKey(string $resourceReference): string
+    {
+        $synchronizationDataTransfer = new SynchronizationDataTransfer();
+        $synchronizationDataTransfer->setReference($resourceReference);
+
+        return $this->getLocaleMapStorageKeyBuilder()->generateKey($synchronizationDataTransfer);
+    }
+
+    /**
+     * @param array<string, mixed> $urlDetails
+     *
+     * @return array<string, mixed>
+     */
+    protected function injectLocaleUrls(array $urlDetails): array
+    {
+        $resourceReference = $this->buildResourceReference($urlDetails);
+
+        if ($resourceReference === null) {
+            return $urlDetails;
+        }
+
+        $localeMapData = $this->storageClient->get($this->getLocaleMapKey($resourceReference));
+
+        if (!$localeMapData || !isset($localeMapData[static::LOCALE_URLS_KEY])) {
+            return $urlDetails;
+        }
+
+        $urlDetails[static::LOCALE_URLS_KEY] = $localeMapData[static::LOCALE_URLS_KEY];
+
+        return $urlDetails;
+    }
+
+    /**
+     * @param array<array<string, mixed>> $urlStorageData
+     *
+     * @return array<array<string, mixed>>
+     */
+    protected function injectLocaleUrlsInBatch(array $urlStorageData): array
+    {
+        $resourceReferences = [];
+        foreach ($urlStorageData as $index => $urlDetails) {
+            $resourceReference = $this->buildResourceReference($urlDetails);
+
+            if ($resourceReference === null) {
+                continue;
+            }
+
+            $resourceReferences[$index] = $resourceReference;
+        }
+
+        if (count($resourceReferences) === 0) {
+            return $urlStorageData;
+        }
+
+        $storageKeys = array_map(
+            fn (string $reference): string => $this->getLocaleMapKey($reference),
+            $resourceReferences,
+        );
+
+        $localeMapResults = $this->storageClient->getMulti(array_values($storageKeys));
+        if (!$localeMapResults) {
+            return $urlStorageData;
+        }
+        $localeMapByReference = array_combine(array_keys($resourceReferences), array_values($localeMapResults));
+
+        foreach ($localeMapByReference as $index => $localeMapData) {
+            if (!$localeMapData) {
+                continue;
+            }
+            $localeMapData = json_decode($localeMapData, true);
+            if (!isset($localeMapData[static::LOCALE_URLS_KEY])) {
+                continue;
+            }
+
+            $urlStorageData[$index][static::LOCALE_URLS_KEY] = $localeMapData[static::LOCALE_URLS_KEY];
+        }
+
+        return $urlStorageData;
     }
 
     /**

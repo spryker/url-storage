@@ -32,6 +32,7 @@ class UrlStorageBusinessFactory extends AbstractBusinessFactory
             $this->getEntityManager(),
             $this->getStoreFacade(),
             $this->getConfig()->isSendingToQueue(),
+            $this->getConfig()->isUrlLocaleMapStorageEnabled(),
         );
     }
 

@@ -24,6 +24,8 @@ interface UrlStorageReaderInterface
      */
     public function findUrlStorageTransferByUrl($url);
 
+    public function hasUrl(string $url, ?string $localeName): bool;
+
     /**
      * @param array<string> $urlCollection
      *

@@ -9,6 +9,7 @@ namespace Spryker\Zed\UrlStorage\Business\Storage;
 
 use Generated\Shared\Transfer\UrlStorageTransfer;
 use Orm\Zed\Url\Persistence\SpyUrl;
+use Orm\Zed\UrlStorage\Persistence\SpyUrlLocaleMapStorage;
 use Orm\Zed\UrlStorage\Persistence\SpyUrlStorage;
 use Spryker\Shared\Log\LoggerTrait;
 use Spryker\Zed\Propel\Persistence\BatchProcessor\ActiveRecordBatchProcessorTrait;
@@ -32,6 +33,8 @@ class UrlStorageWriter implements UrlStorageWriterInterface
      * @var string
      */
     public const RESOURCE_VALUE = 'value';
+
+    protected const string LOCALE_URLS_KEY = 'locale_urls';
 
     /**
      * @var \Spryker\Zed\UrlStorage\Dependency\Service\UrlStorageToUtilSanitizeServiceInterface
@@ -60,18 +63,22 @@ class UrlStorageWriter implements UrlStorageWriterInterface
      */
     protected $isSendingToQueue = true;
 
+    protected bool $isUrlLocaleMapStorageEnabled = false;
+
     public function __construct(
         UrlStorageToUtilSanitizeServiceInterface $utilSanitize,
         UrlStorageRepositoryInterface $urlStorageRepository,
         UrlStorageEntityManagerInterface $urlStorageEntityManager,
         UrlStorageToStoreFacadeInterface $storeFacade,
-        bool $isSendingToQueue
+        bool $isSendingToQueue,
+        bool $isUrlLocaleMapStorageEnabled
     ) {
         $this->utilSanitize = $utilSanitize;
         $this->urlStorageRepository = $urlStorageRepository;
         $this->urlStorageEntityManager = $urlStorageEntityManager;
         $this->storeFacade = $storeFacade;
         $this->isSendingToQueue = $isSendingToQueue;
+        $this->isUrlLocaleMapStorageEnabled = $isUrlLocaleMapStorageEnabled;
     }
 
     /**
@@ -87,6 +94,10 @@ class UrlStorageWriter implements UrlStorageWriterInterface
         $urlStorageEntities = $this->urlStorageRepository->findUrlStorageByUrlIds(array_keys($urlStorageTransfers));
 
         $this->storeData($urlStorageTransfers, $urlStorageEntities);
+
+        if ($this->isUrlLocaleMapStorageEnabled) {
+            $this->storeLocaleMapData($urlStorageTransfers);
+        }
     }
 
     /**
@@ -155,12 +166,72 @@ class UrlStorageWriter implements UrlStorageWriterInterface
             return;
         }
 
+        $data = $this->utilSanitize->arrayFilterRecursive($urlStorageTransfer->modifiedToArray());
+
+        if ($this->isUrlLocaleMapStorageEnabled) {
+            unset($data[static::LOCALE_URLS_KEY]);
+        }
+
         $urlStorageEntity->setByName('fk_' . $resource[static::RESOURCE_TYPE], $resource[static::RESOURCE_VALUE]);
         $urlStorageEntity->setUrl($urlStorageTransfer->getUrl());
         $urlStorageEntity->setFkUrl($urlStorageTransfer->getIdUrl());
-        $urlStorageEntity->setData($this->utilSanitize->arrayFilterRecursive($urlStorageTransfer->modifiedToArray()));
+        $urlStorageEntity->setData($data);
         $urlStorageEntity->setIsSendingToQueue($this->isSendingToQueue);
         $this->persist($urlStorageEntity);
+    }
+
+    /**
+     * @param array<\Generated\Shared\Transfer\UrlStorageTransfer> $urlStorageTransfers
+     */
+    protected function storeLocaleMapData(array $urlStorageTransfers): void
+    {
+        $localeMapDataByReference = $this->collectLocaleMapDataByReference($urlStorageTransfers);
+
+        if (count($localeMapDataByReference) === 0) {
+            return;
+        }
+
+        $existingEntities = $this->urlStorageRepository->findUrlLocaleMapStorageByResourceReferences(array_keys($localeMapDataByReference));
+
+        foreach ($localeMapDataByReference as $resourceReference => $localeUrlsData) {
+            $localeMapStorageEntity = $existingEntities[$resourceReference] ?? new SpyUrlLocaleMapStorage();
+            $localeMapStorageEntity->setResourceReference($resourceReference);
+            $localeMapStorageEntity->setData([static::LOCALE_URLS_KEY => $localeUrlsData]);
+            $localeMapStorageEntity->setIsSendingToQueue($this->isSendingToQueue);
+            $this->persist($localeMapStorageEntity);
+        }
+        $this->commit();
+    }
+
+    /**
+     * @param array<\Generated\Shared\Transfer\UrlStorageTransfer> $urlStorageTransfers
+     *
+     * @return array<string, array<array<string, mixed>>>
+     */
+    protected function collectLocaleMapDataByReference(array $urlStorageTransfers): array
+    {
+        $localeMapDataByReference = [];
+
+        foreach ($urlStorageTransfers as $urlStorageTransfer) {
+            $resource = $this->findResourceArguments($urlStorageTransfer->toArray());
+
+            if ($resource === null) {
+                continue;
+            }
+
+            $resourceReference = sprintf('resource_%s:%s', $resource[static::RESOURCE_TYPE], $resource[static::RESOURCE_VALUE]);
+
+            if (isset($localeMapDataByReference[$resourceReference])) {
+                continue;
+            }
+
+            $localeMapDataByReference[$resourceReference] = array_map(
+                static fn (UrlStorageTransfer $localeUrl): array => $localeUrl->toArray(),
+                $urlStorageTransfer->getLocaleUrls()->getArrayCopy(),
+            );
+        }
+
+        return $localeMapDataByReference;
     }
 
     /**

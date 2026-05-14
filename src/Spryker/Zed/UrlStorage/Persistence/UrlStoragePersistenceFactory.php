@@ -8,6 +8,7 @@
 namespace Spryker\Zed\UrlStorage\Persistence;
 
 use Orm\Zed\Url\Persistence\SpyUrlQuery;
+use Orm\Zed\UrlStorage\Persistence\SpyUrlLocaleMapStorageQuery;
 use Orm\Zed\UrlStorage\Persistence\SpyUrlRedirectStorageQuery;
 use Orm\Zed\UrlStorage\Persistence\SpyUrlStorageQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
@@ -35,6 +36,11 @@ class UrlStoragePersistenceFactory extends AbstractPersistenceFactory
     public function createSpyStorageUrlRedirectQuery()
     {
         return SpyUrlRedirectStorageQuery::create();
+    }
+
+    public function createSpyUrlLocaleMapStorageQuery(): SpyUrlLocaleMapStorageQuery
+    {
+        return SpyUrlLocaleMapStorageQuery::create();
     }
 
     public function getUrlQuery(): SpyUrlQuery

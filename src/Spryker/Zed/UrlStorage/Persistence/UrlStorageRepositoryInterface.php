@@ -30,4 +30,11 @@ interface UrlStorageRepositoryInterface
      * @return array<\Orm\Zed\Url\Persistence\SpyUrl>
      */
     public function findUrlEntitiesByUrls(array $urls): array;
+
+    /**
+     * @param array<string> $resourceReferences
+     *
+     * @return array<string, \Orm\Zed\UrlStorage\Persistence\SpyUrlLocaleMapStorage>
+     */
+    public function findUrlLocaleMapStorageByResourceReferences(array $resourceReferences): array;
 }

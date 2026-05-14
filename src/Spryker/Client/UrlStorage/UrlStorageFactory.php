@@ -34,6 +34,7 @@ class UrlStorageFactory extends AbstractFactory
             $this->getSynchronizationService(),
             $this->getUtilEncodingService(),
             $this->getUrlStorageResourceMapperPlugins(),
+            $this->getConfig(),
         );
     }
 

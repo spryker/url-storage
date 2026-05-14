@@ -71,6 +71,30 @@ class UrlStorageRepository extends AbstractRepository implements UrlStorageRepos
     }
 
     /**
+     * @param array<string> $resourceReferences
+     *
+     * @return array<string, \Orm\Zed\UrlStorage\Persistence\SpyUrlLocaleMapStorage>
+     */
+    public function findUrlLocaleMapStorageByResourceReferences(array $resourceReferences): array
+    {
+        if (count($resourceReferences) === 0) {
+            return [];
+        }
+
+        $localeMapStorageEntities = $this->getFactory()
+            ->createSpyUrlLocaleMapStorageQuery()
+            ->filterByResourceReference_In($resourceReferences)
+            ->find();
+
+        $indexedEntities = [];
+        foreach ($localeMapStorageEntities as $entity) {
+            $indexedEntities[$entity->getResourceReference()] = $entity;
+        }
+
+        return $indexedEntities;
+    }
+
+    /**
      * @param array<int> $urlIds
      *
      * @return array

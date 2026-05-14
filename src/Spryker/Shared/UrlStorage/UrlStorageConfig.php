@@ -38,4 +38,16 @@ class UrlStorageConfig extends AbstractSharedConfig
      * @var string
      */
     public const string PUBLISH_URL_REDIRECT_RETRY = 'publish.url.redirect.retry';
+
+    /**
+     * Specification:
+     * - When enabled, locale_urls are stored in a separate url_locale_map storage entry per resource instead of being
+     *   duplicated in every URL entry. Must be enabled consistently in both Zed and Client layers.
+     *
+     * @api
+     */
+    public function isUrlLocaleMapStorageEnabled(): bool
+    {
+        return false;
+    }
 }

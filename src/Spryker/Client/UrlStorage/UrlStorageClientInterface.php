@@ -54,6 +54,21 @@ interface UrlStorageClientInterface
 
     /**
      * Specification:
+     * - Checks whether a URL has a matching storage entry and a resource mapper plugin handles it.
+     * - When localeName is null the localeName will be retrieved from the URL details.
+     * - Does not fetch the mapped resource data, making it cheaper than matchUrl for existence checks.
+     *
+     * @api
+     *
+     * @param string $url
+     * @param string|null $localeName
+     *
+     * @return bool
+     */
+    public function hasUrl(string $url, ?string $localeName): bool;
+
+    /**
+     * Specification:
      * - Gets multiple URLs data from storage.
      * - Returns collection of UrlStorageTransfer.
      *
