@@ -7,8 +7,10 @@
 
 namespace Spryker\Zed\UrlStorage\Persistence;
 
+use Generated\Shared\Transfer\FilterTransfer;
 use Orm\Zed\UrlStorage\Persistence\Map\SpyUrlStorageTableMap;
 use Spryker\Zed\Kernel\Persistence\AbstractRepository;
+use Spryker\Zed\Synchronization\Persistence\Propel\Formatter\SynchronizationDataTransferObjectFormatter;
 
 /**
  * @method \Spryker\Zed\UrlStorage\Persistence\UrlStoragePersistenceFactory getFactory()
@@ -92,6 +94,25 @@ class UrlStorageRepository extends AbstractRepository implements UrlStorageRepos
         }
 
         return $indexedEntities;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\FilterTransfer $filterTransfer
+     * @param array<int> $urlLocaleMapStorageIds
+     *
+     * @return array<\Generated\Shared\Transfer\SynchronizationDataTransfer>
+     */
+    public function getUrlLocaleMapStorageSynchronizationDataTransfers(FilterTransfer $filterTransfer, array $urlLocaleMapStorageIds = []): array
+    {
+        $urlLocaleMapStorageQuery = $this->getFactory()->createSpyUrlLocaleMapStorageQuery();
+
+        if ($urlLocaleMapStorageIds) {
+            $urlLocaleMapStorageQuery->filterByIdUrlLocaleMapStorage_In($urlLocaleMapStorageIds);
+        }
+
+        return $this->buildQueryFromCriteria($urlLocaleMapStorageQuery, $filterTransfer)
+            ->setFormatter(SynchronizationDataTransferObjectFormatter::class)
+            ->find();
     }
 
     /**

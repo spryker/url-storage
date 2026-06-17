@@ -51,4 +51,14 @@ class UrlStorageConstants
      * @var string
      */
     public const REDIRECT_RESOURCE_NAME = 'redirect';
+
+    /**
+     * Specification:
+     * - Resource name, this will use for key generating
+     *
+     * @api
+     *
+     * @var string
+     */
+    public const URL_LOCALE_MAP_RESOURCE_NAME = 'url_locale_map';
 }

@@ -7,6 +7,8 @@
 
 namespace Spryker\Zed\UrlStorage\Persistence;
 
+use Generated\Shared\Transfer\FilterTransfer;
+
 interface UrlStorageRepositoryInterface
 {
     /**
@@ -37,4 +39,12 @@ interface UrlStorageRepositoryInterface
      * @return array<string, \Orm\Zed\UrlStorage\Persistence\SpyUrlLocaleMapStorage>
      */
     public function findUrlLocaleMapStorageByResourceReferences(array $resourceReferences): array;
+
+    /**
+     * @param \Generated\Shared\Transfer\FilterTransfer $filterTransfer
+     * @param array<int> $urlLocaleMapStorageIds
+     *
+     * @return array<\Generated\Shared\Transfer\SynchronizationDataTransfer>
+     */
+    public function getUrlLocaleMapStorageSynchronizationDataTransfers(FilterTransfer $filterTransfer, array $urlLocaleMapStorageIds = []): array;
 }
