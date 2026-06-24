@@ -12,6 +12,8 @@ use Spryker\Shared\Kernel\AbstractSharedConfig;
 class UrlStorageConfig extends AbstractSharedConfig
 {
     /**
+     * @api
+     *
      * Defines queue name that as used for asynchronous event handling.
      *
      * @var string
@@ -19,6 +21,8 @@ class UrlStorageConfig extends AbstractSharedConfig
     public const PUBLISH_URL = 'publish.url';
 
     /**
+     * @api
+     *
      * Defines retry queue name that as used for asynchronous event handling.
      *
      * @var string
@@ -26,6 +30,8 @@ class UrlStorageConfig extends AbstractSharedConfig
     public const PUBLISH_URL_RETRY = 'publish.url.retry';
 
     /**
+     * @api
+     *
      * Defines queue name that as used for asynchronous event handling.
      *
      * @var string
@@ -33,6 +39,8 @@ class UrlStorageConfig extends AbstractSharedConfig
     public const string PUBLISH_URL_REDIRECT = 'publish.url.redirect';
 
     /**
+     * @api
+     *
      * Defines retry queue name that as used for asynchronous event handling.
      *
      * @var string
